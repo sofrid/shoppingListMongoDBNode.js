@@ -1,0 +1,34 @@
+C:\Users\87sofrid\Desktop\Databashantering\shoppingListMongoDBVG>node app.js
+(node:7128) DeprecationWarning: current URL string parser is deprecated, and will be removed in a future version. To use the new parser, pass option { useNewUrlParser: true
+} to MongoClient.connect.
+Connected correctly to server
+Inserted 3 items into the shoppingList collection
+Updated item Milk to Lemon in shoppingList
+Removed the item Apples from shoppingList
+Found the item Honey in shoppingList
+[ { _id: 5cacb349694f581bd825cb48,
+    item: 'Honey',
+    qty: 1,
+    tags: [ 'Svensk', 'Bi' ],
+    size: { st: 250, uom: 'gram' } } ]
+Found the following items in shoppingList
+[ { _id: 5cacb349694f581bd825cb47,
+    item: 'Lemon',
+    qty: 3,
+    tags: [ 'Gul', 'Spansk' ],
+    size: { st: 2, uom: 'antal' } },
+  { _id: 5cacb349694f581bd825cb48,
+    item: 'Honey',
+    qty: 1,
+    tags: [ 'Svensk', 'Bi' ],
+    size: { st: 250, uom: 'gram' } } ]
+Updated item Lemon to favorite
+Show favorite
+[ { _id: 5cacb349694f581bd825cb47,
+    item: 'Lemon',
+    qty: 3,
+    tags: [ 'Gul', 'Spansk' ],
+    size: { st: 2, uom: 'antal' },
+    fav: 1 } ]
+
+C:\Users\87sofrid\Desktop\Databashantering\shoppingListMongoDBVG>

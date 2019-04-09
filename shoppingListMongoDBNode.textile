@@ -1,0 +1,148 @@
+const MongoClient = require('mongodb').MongoClient;
+const assert = require('assert');
+
+// Connection URL
+const url = 'mongodb://localhost:27017';
+
+// Database Name shoppingList
+const dbName = 'shoppingList';
+
+// Use connect method to connect to the server
+MongoClient.connect(url, function(err, client) {
+    assert.equal(null, err);
+    console.log("Connected correctly to server");
+
+    const db = client.db(dbName);
+
+    // Insert, Remove, Update, Find One, Find All, Add Favorite and Show Favorite in document shoppingList
+    insertItemToShoppingList(db, function() {
+        updateItemInShoppingList(db, function () {
+            removeItemInShoppingList(db, function () {
+                findOneItemInShoppingList(db, function () {
+                    findItemInShoppingList(db, function () {
+                        addFavoriteItemFromShoppingList(db, function () {
+                            showFavoriteItemsFromShoppingList(db, function () {
+                                client.close();
+                            });
+                        });
+                    });
+                });
+            });
+        });
+    });
+
+});
+
+// Insert items Milk, Honey and Apples to shoppingList
+const insertItemToShoppingList = function(db, callback) {
+    // Get the itemList collection
+    const collection = db.collection('itemList');
+    // Insert some items
+    collection.insertMany([
+        {
+            item: 'Milk',
+            qty: 2,
+            tags: ['Standard', 'Arla'],
+            size: { st: 1, uom: 'liter' }
+        },
+        {
+            item: 'Honey',
+            qty: 1,
+            tags: ['Svensk', 'Bi'],
+            size: { st: 250, uom: 'gram' }
+        },
+        {
+            item: 'Apples',
+            qty: 4,
+            tags: ['röda', 'gröna'],
+            size: { st: 2, uom: 'Antal' }
+        }
+    ], function(err, result) {
+        assert.equal(err, null);
+        assert.equal(3, result.result.n);
+        assert.equal(3, result.ops.length);
+        console.log("Inserted 3 items into the shoppingList collection");
+        callback(result);
+    });
+}
+
+// Find all items in shoppingList
+const findItemInShoppingList = function(db, callback) {
+    // Get the itemList collection
+    const collection = db.collection('itemList');
+    // Find items
+    collection.find({}).toArray(function(err, docs) {
+        assert.equal(err, null);
+        console.log("Found the following items in shoppingList");
+        console.log(docs)
+        callback(docs);
+    });
+}
+
+// Update the item Milk to Lemon in shoppingList
+const updateItemInShoppingList = function(db, callback) {
+    // Get the itemList collection
+    const collection = db.collection('itemList');
+    // Update item where item is Milk, set item to Lemon
+    collection.updateOne({ item: 'Milk', qty: 2, tags: ['Standard', 'Arla'], size: { st: 1, uom: 'liter' } }
+        , { $set: { item : 'Lemon', qty: 3, tags: ['Gul', 'Spansk'], size: { st: 2, uom: 'antal'}} }, function(err, result) {
+            assert.equal(err, null);
+            assert.equal(1, result.result.n);
+            console.log("Updated item Milk to Lemon in shoppingList");
+            callback(result);
+        });
+}
+
+
+// Remove Apples from shoppingList.
+const removeItemInShoppingList = function(db, callback) {
+    // Get the itemList collection
+    const collection = db.collection('itemList');
+    // Delete item where item is Apple
+    collection.deleteOne({ item : 'Apples', qty: 4, tags: ['röda', 'gröna'], size: { st: 2, uom: 'Antal' } }, function(err, result) {
+        assert.equal(err, null);
+        assert.equal(1, result.result.n);
+        console.log("Removed the item Apples from shoppingList");
+        callback(result);
+    });
+}
+
+// Find the item Honey from shoppingList
+const findOneItemInShoppingList = function(db, callback) {
+    // Get the itemList collection
+    const collection = db.collection('itemList');
+    // Find one item
+    collection.find({item : 'Honey'}).toArray(function(err, docs) {
+        assert.equal(err, null);
+        console.log("Found the item Honey in shoppingList");
+        console.log(docs);
+        callback(docs);
+    });
+}
+
+// Add item to favorite list
+const addFavoriteItemFromShoppingList = function(db, callback) {
+    // Get the itemList collection
+    const collection = db.collection('itemList');
+    // Update item to favorite
+    collection.updateOne({ item : 'Lemon', qty: 3, tags: ['Gul', 'Spansk'], size: { st: 2, uom: 'antal'} }
+        , { $set: { fav : 1 } }, function(err, result) {
+            assert.equal(err, null);
+            assert.equal(1, result.result.n);
+            console.log("Updated item Lemon to favorite");
+            callback(result);
+        });
+}
+
+// Show item on favorite list
+const showFavoriteItemsFromShoppingList = function(db, callback) {
+    // Get the item collection
+    const collection = db.collection('itemList');
+    // Show favorite item
+    collection.find({ fav : 1 }).toArray(function(err, docs) {
+        assert.equal(err, null);
+        console.log("Show favorite");
+        console.log(docs);
+        callback(docs);
+    });
+}
